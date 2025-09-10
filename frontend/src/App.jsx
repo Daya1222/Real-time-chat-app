@@ -6,10 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PublicRoutes, ProtectedRoutes } from "./components/redirectHandler";
 import Register from "./pages/register";
 import Info from "./pages/info";
+import Dashboard from "./components/dashboard";
+import UserCard from "./components/userCard";
 
 function App() {
   return (
-    <>
+    <div className="app">
       <BrowserRouter>
         <Routes>
           <Route element={<PublicRoutes />}>
@@ -19,11 +21,18 @@ function App() {
           </Route>
 
           <Route element={<ProtectedRoutes />}>
-            <Route path="/home" element={<Home />} />
+            <Route
+              path="/home"
+              element={
+                <Dashboard>
+                  <Home />
+                </Dashboard>
+              }
+            />
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 

@@ -1,15 +1,14 @@
 .info-page {
   height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background-color: #f0fff0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 40px;
-  color: white;
+  color: #333;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
-  overflow: hidden;
 }
 
 .info-page .Text {
@@ -21,10 +20,11 @@
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 30px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2e8b57;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
 }
 
 .info-page .Text p {
@@ -32,6 +32,7 @@
   line-height: 1.8;
   opacity: 0.9;
   margin: 0;
+  color: #666;
 }
 
 .info-page .button-class {
@@ -50,30 +51,29 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   min-width: 140px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .info-page .login-button {
-  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-  color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  background-color: #ffcccc;
+  color: #c93b3b;
 }
 
 .info-page .login-button:hover {
-  background: linear-gradient(45deg, #ee5a52, #ff6b6b);
+  background-color: #ffb3b3;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 4px 10px rgba(255, 204, 204, 0.5);
 }
 
 .info-page .register-button {
-  background: linear-gradient(45deg, #52ee5a, #6bff6b);
+  background-color: #2e8b57;
   color: white;
-  box-shadow: 0 4px 15px rgba(107, 255, 107, 0.3);
 }
 
 .info-page .register-button:hover {
-  background: linear-gradient(45deg, #6bff6b, #52ee5a);
+  background-color: #3cb371;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(107, 255, 107, 0.4);
+  box-shadow: 0 4px 10px rgba(46, 139, 87, 0.3);
 }
 
 @media (max-width: 768px) {

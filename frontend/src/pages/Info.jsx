@@ -22,7 +22,10 @@ function Info() {
         <button className="login-button" onClick={() => navigate("/login")}>
           Login
         </button>
-        <button className="register-button" onClick={() => navigate("/login")}>
+        <button
+          className="register-button"
+          onClick={() => navigate("/register")}
+        >
           Register
         </button>
       </div>

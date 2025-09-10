@@ -118,7 +118,7 @@ async function register(req, res, next) {
   }
 }
 
-async function adminOnly(req, res, next) {
+async function isAdmin(req, res, next) {
   const user = req.user;
   const reqUser = await Users.findOne({ _id: user._id });
   if (reqUser.role === "admin") {
@@ -128,4 +128,13 @@ async function adminOnly(req, res, next) {
   }
 }
 
-module.exports = { register, login, authorize, adminOnly };
+function isAuthorized(token) {
+  try {
+    const user = jwt.verify(token, SECRET_KEY);
+    return { user: user, status: true };
+  } catch (err) {
+    return { status: false };
+  }
+}
+
+module.exports = { register, login, authorize, isAdmin, isAuthorized };

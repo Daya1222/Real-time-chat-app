@@ -1,0 +1,125 @@
+.home-page {
+  min-height: 100vh;
+  background-color: #f0fff0; /* Lightest green/off-white */
+  padding: 30px 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+}
+
+.home-page::before {
+  /* No need for complex animations, we're going for minimal */
+  display: none;
+}
+
+.home-page .content-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-page .page-title {
+  color: #2e8b57; /* A nice, vibrant green */
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.home-page .users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.home-page .search-bar {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 30px auto;
+  padding: 15px 20px;
+  font-size: 16px;
+  background-color: #e6f2e6; /* A slightly darker light green */
+  color: #333;
+  border: 1px solid #d4e8d4; /* Subtle border for clean lines */
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.home-page .search-bar:focus {
+  background-color: #d4e8d4;
+  border-color: #2e8b57;
+  transform: scale(1.02);
+  box-shadow: none; /* No shadow */
+}
+
+.home-page .search-bar::placeholder {
+  color: #666;
+}
+
+.home-page .empty-state {
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  margin-top: 60px;
+}
+
+.home-page .loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.home-page .loading-spinner::after {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 3px solid #d4e8d4;
+  border-top: 3px solid #2e8b57;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 20px 15px;
+  }
+
+  .home-page .page-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+
+  .home-page .users-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+  }
+
+  .home-page .search-bar {
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page .users-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .home-page .page-title {
+    font-size: 1.8rem;
+  }
+}

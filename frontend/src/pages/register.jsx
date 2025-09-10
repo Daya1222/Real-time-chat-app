@@ -29,7 +29,11 @@ function Register() {
     <div className="Register-page">
       <div className="app-info">
         <h1>Welcome</h1>
-        <p>Some info about your app can go here.</p>
+        <p>
+          Meet your new chat home. Connect with friends, share your vibe, and
+          jump into conversations that matter. Say goodbye to endless scrolling
+          and hello to a community that gets you.
+        </p>
       </div>
       <div className="Register-side">
         <div className="Register-card">
@@ -68,6 +72,7 @@ function Register() {
             <button type="submit" className="Register-button">
               Register
             </button>
+            <a href="/login">Already have an account?</a>
           </form>
         </div>
       </div>

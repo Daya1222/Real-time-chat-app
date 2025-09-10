@@ -1,0 +1,177 @@
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background-color: white;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  position: relative;
+}
+
+.userCard::before {
+  /* Removed for a cleaner, minimal look */
+  content: none;
+}
+
+.userCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.userCard:active {
+  transform: translateY(-2px);
+  transition: transform 0.1s ease;
+}
+
+.userCard .profilePic {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #2e8b57; /* Light green border */
+  background-color: #e6f2e6; /* A very light green background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.userCard:hover .profilePic {
+  transform: scale(1.05);
+}
+
+.userCard .profilePic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.userCard:hover .profilePic img {
+  transform: scale(1.1);
+}
+
+.userCard .profilePic .default-avatar {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2e8b57; /* Matching text color */
+  text-transform: uppercase;
+}
+
+.userCard .user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.userCard .userName {
+  font-weight: 600;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.userCard:hover .userName {
+  color: #000;
+}
+
+.userCard .userStatus {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+}
+
+.userCard .online-indicator {
+  width: 12px;
+  height: 12px;
+  background: #4ade80; /* A friendly, bright green */
+  border-radius: 50%;
+  border: 2px solid white;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+}
+
+.userCard .offline-indicator {
+  width: 12px;
+  height: 12px;
+  background: #a0a0a0; /* A simple gray for offline */
+  border-radius: 50%;
+  border: 2px solid white;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+}
+
+.userCard .action-button {
+  background-color: #ffcccc; /* Light red for contrast */
+  color: #c93b3b; /* Darker red for text */
+  border: 1px solid #ffb3b3;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+.userCard:hover .action-button {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.userCard .action-button:hover {
+  background-color: #ffb3b3;
+}
+
+@media (max-width: 768px) {
+  .userCard {
+    padding: 16px;
+    max-width: 280px;
+  }
+
+  .userCard .profilePic {
+    width: 50px;
+    height: 50px;
+  }
+
+  .userCard .userName {
+    font-size: 1rem;
+  }
+
+  .userCard .action-button {
+    opacity: 1;
+    transform: translateX(0);
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .userCard {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .userCard .profilePic {
+    width: 45px;
+    height: 45px;
+  }
+
+  .userCard .userName {
+    font-size: 0.95rem;
+  }
+}

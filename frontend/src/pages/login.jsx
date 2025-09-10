@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/login.css";
 import axios from "axios";
+import { getSocket } from "../components/socket";
 
 function Login() {
   const [userName, setUserName] = useState("");
@@ -16,9 +17,10 @@ function Login() {
 
       const token = response.data.token;
       localStorage.setItem("token", token);
+      getSocket({ token });
       navigate("/home");
     } catch (err) {
-      setError(err.response?.data?.msg || "Login failed");
+      console.log(err);
     }
   }
 
@@ -26,7 +28,7 @@ function Login() {
     <div className="login-page">
       <div className="app-info">
         <h1>Welcome</h1>
-        <p>Some info about your app can go here.</p>
+        <p>Step inside. The conversation's waiting for you.</p>
       </div>
       <div className="login-side">
         <div className="login-card">
@@ -55,6 +57,14 @@ function Login() {
             />
             <button type="submit" className="login-button">
               Login
+            </button>
+            <button
+              className="register-button"
+              onClick={() => {
+                navigate("/register");
+              }}
+            >
+              Register
             </button>
           </form>
         </div>

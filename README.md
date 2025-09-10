@@ -121,18 +121,8 @@ realtime-chat/
 ### Authentication
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user
 
-### Messages
-- `GET /api/messages` - Fetch message history
-- `POST /api/messages` - Send message (via Socket.IO)
 
-### Socket Events
-- `connection` - User connects to chat
-- `join_room` - Join specific chat room
-- `send_message` - Real-time message sending
-- `receive_message` - Real-time message receiving
-- `disconnect` - User disconnects
 
 ## 🎨 UI Features
 
@@ -147,13 +137,12 @@ realtime-chat/
 
 **Backend:**
 - `npm run dev` - Start development server with nodemon
-- `npm start` - Start production server
-- `npm test` - Run backend tests
+
 
 **Frontend:**
-- `npm start` - Start development server
+- `npm run dev` - Start development server
 - `npm build` - Create production build
-- `npm test` - Run frontend tests
+
 
 ## 🚦 Status
 

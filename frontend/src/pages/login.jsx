@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/login.css";
 import axios from "axios";
 import { getSocket } from "../components/socket";
+import { RefreshContext } from "../components/refreshContext";
 
 function Login() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { setGlobalUser } = useContext(RefreshContext);
 
   async function handleSubmit() {
     try {
@@ -16,6 +18,8 @@ function Login() {
       });
 
       const token = response.data.token;
+      setGlobalUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("token", token);
       getSocket({ token });
       navigate("/home");

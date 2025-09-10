@@ -44,7 +44,7 @@ async function genToken(userName) {
 
 // login logic
 
-async function login(req, res, next) {
+async function login(req, res) {
   const userName = req.body.creds["userName"];
   const password = req.body.creds["password"];
   if (!userName) {
@@ -80,41 +80,29 @@ function hasher(password) {
 }
 
 async function register(req, res, next) {
-  const user = req.body.creds["userName"];
-  const password = req.body.creds["password"];
+  const { userName, password, email } = req.body.creds;
+  if (!userName || !password || !email) {
+    return res
+      .status(400)
+      .json({ msg: "Missing username, password, or email" });
+  }
 
-  const email = req.body.creds["email"];
-  if (!user) {
-    return res.status(400).json({ msg: "No username" });
-  } else if (!password) {
-    return res.status(400).json({ msg: "No password or email provided" });
-  } else if (!email) {
-    return res.status(400).json({ msg: "No email or password provided" });
-  } else {
-    let hashedPassword;
-    try {
-      hashedPassword = await hasher(password);
-    } catch (err) {
-      return res.status(500).json({ msg: "Hashing failed" });
+  try {
+    const hashedPassword = await hasher(password);
+    const newUser = await Users.create({
+      userName: userName,
+      passwordHash: hashedPassword,
+      email: email,
+    });
+    req.user = newUser;
+    next();
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(409).json({ msg: "Username or email already exists" });
+    } else {
+      console.error(err);
+      return res.status(500).json({ msg: "Internal server error" });
     }
-
-    try {
-      await Users.create({
-        userName: user,
-        passwordHash: hashedPassword,
-        email: email,
-      });
-    } catch (err) {
-      if (err.code === 11000) {
-        return res
-          .status(409)
-          .json({ msg: "Username or email already exists" });
-      } else {
-        return res.status(500).json({ msg: "Internal server error" });
-      }
-    }
-
-    return res.status(200).json({ msg: "User successfully created." });
   }
 }
 

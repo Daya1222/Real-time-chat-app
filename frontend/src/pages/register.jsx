@@ -2,8 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/register.css";
 import axios from "axios";
+import { useContext } from "react";
+import { RefreshContext } from "../components/refreshContext";
+import { Socket } from "socket.io-client";
 
 function Register() {
+  const { refresh, setRefresh } = useContext(RefreshContext);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -18,6 +22,7 @@ function Register() {
           email: email,
         },
       });
+      setRefresh((prev) => !prev);
       navigate("/");
       console.log(response.data);
     } catch (err) {

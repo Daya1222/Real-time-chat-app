@@ -1,0 +1,24 @@
+POST http://localhost:3000/login
+content-type: application/json
+
+{
+  "creds": {
+    "userName": "daya1222",
+    "password": "daya1222"
+  }
+}
+###
+POST http://localhost:3000/register
+content-type: application/json
+
+{
+  "creds": {
+    "userName": "daya1222",
+    "password": "daya1222",
+    "email":"dayajoshi1222@gmail.com"
+  }
+}
+###
+GET http://localhost:3000/
+Headers:
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGJlOTAyZDMzNWRmYzU1NmEwYWIwZWYiLCJ1c2VyTmFtZSI6ImRheWExMjIyIiwiaWF0IjoxNzU3MzE5NDg1LCJleHAiOjE3NTczMjMwODV9.KlEBLTi75ORTAzzUtvow5U1aq0HIaGMTtC8VYzpDy2A

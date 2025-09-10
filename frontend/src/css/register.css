@@ -1,0 +1,204 @@
+.Register-page {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  display: flex;
+  width: 100%;
+}
+
+.Register-page .app-info {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  flex: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.Register-page .app-info::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+.Register-page .app-info h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  position: relative;
+}
+
+.Register-page .app-info p {
+  font-size: 1.2rem;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+  opacity: 0.9;
+  z-index: 1;
+  position: relative;
+}
+
+.Register-page .Register-side {
+  background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+  flex: 3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.Register-page .Register-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  min-height: 500px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Register-page .Register-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.Register-page .Register-text {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+  color: white;
+}
+
+.Register-page form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.Register-page .userName,
+.Register-page .email,
+.Register-page .password {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.Register-page .userName:focus,
+.Register-page .email:focus,
+.Register-page .password:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+}
+
+.Register-page input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.Register-page .Register-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(45deg, #52ee5a, #6bff6b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(107, 255, 107, 0.3);
+}
+
+.Register-page .Register-button:hover {
+  background: linear-gradient(45deg, #6bff6b, #52ee5a);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(107, 255, 107, 0.4);
+}
+
+.Register-page .Register-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .Register-page {
+    flex-direction: column;
+  }
+
+  .Register-page .app-info {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .Register-page .app-info h1 {
+    font-size: 2rem;
+  }
+
+  .Register-page .app-info p {
+    font-size: 1rem;
+  }
+
+  .Register-page .Register-side {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .Register-page .Register-card {
+    min-height: 400px;
+    padding: 30px 20px;
+  }
+
+  .Register-page .Register-text {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+}

@@ -73,10 +73,7 @@ Auth      │ JSON Web Tokens (JWT)
    
    Create `.env` in the backend directory:
    ```env
-   PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/chatapp
    JWT_SECRET=your-super-secret-jwt-key
-   NODE_ENV=development
    ```
 
 4. **Start the application**
@@ -87,34 +84,13 @@ Auth      │ JSON Web Tokens (JWT)
    
    # Terminal 2 - Frontend development server
    cd frontend
-   npm start
+   npm run dev
    ```
 
 5. **Access the application**
-   - Frontend: `http://localhost:3000`
-   - Backend API: `http://localhost:5000`
+   - Frontend: `http://localhost:5173`
+   - Backend API: `http://localhost:3000`
 
-## 📁 Project Structure
-
-```
-realtime-chat/
-├── backend/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── socket/
-│   └── server.js
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   └── App.js
-│   └── public/
-└── README.md
-```
 
 ## 🔧 API Endpoints
 

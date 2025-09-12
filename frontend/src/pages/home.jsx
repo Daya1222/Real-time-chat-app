@@ -110,8 +110,7 @@ function Home() {
   // show user list if no chat selected
   if (!selectedUser) {
     const showableUsers = users.filter(
-      (u) =>
-        u.userName !== globalUser.userName && onlineUsers.includes(u.userName)
+      (u) => u.userName !== globalUser.userName
     );
 
     return (
@@ -124,6 +123,7 @@ function Home() {
                 userName={user.userName}
                 profilePic={profilePic}
                 lastMessage={lastMessagesMap[user.userName]?.text || ""}
+                status={onlineUsers.includes(user.userName)}
                 onClick={() => {
                   setRefresh((prev) => !prev);
                   setSelectedUser(user.userName);

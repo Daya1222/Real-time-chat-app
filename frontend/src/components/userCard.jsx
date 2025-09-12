@@ -3,7 +3,14 @@ import { useContext } from "react";
 import { RefreshContext } from "./refreshContext";
 import deleteImg from "../assets/delete.png";
 
-function UserCard({ userName, profilePic, onClick, page, lastMessage }) {
+function UserCard({
+  userName,
+  profilePic,
+  onClick,
+  page,
+  lastMessage,
+  status,
+}) {
   const { globalUser } = useContext(RefreshContext);
 
   if (page === "admin") {
@@ -27,6 +34,9 @@ function UserCard({ userName, profilePic, onClick, page, lastMessage }) {
       <div className="user-info">
         <div className="userName">{userName}</div>
         <div className="last-message">{lastMessage}</div>
+      </div>
+      <div className="status">
+        {status ? <div className="online" /> : <div className="offline" />}
       </div>
     </div>
   );

@@ -88,3 +88,17 @@
   filter: none; /* make icon black as-is */
   transition: opacity 0.2s, transform 0.2s;
 }
+
+.offline {
+  height: 20px;
+  width: 20px;
+  border-radius: 100px;
+  background-color: #bb230e;
+}
+
+.online {
+  height: 20px;
+  width: 20px;
+  border-radius: 100px;
+  background-color: #2e7d32;
+}

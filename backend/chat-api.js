@@ -12,6 +12,7 @@ const {
 const { Messages, Users } = require("./models.js");
 
 const app = express();
+
 const httpServer = createServer(app);
 
 // Track online users: { username: socketId }
@@ -224,6 +225,16 @@ app.post("/api/delete-user", isAdmin, async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
   }
+});
+
+const path = require("path");
+
+// Serve frontend build
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+// Fallback to index.html for SPA routing
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
 });
 
 // start server

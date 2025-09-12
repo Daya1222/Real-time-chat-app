@@ -14,7 +14,7 @@ function Register() {
 
   async function handleSubmit() {
     try {
-      const response = await axios.post("http://localhost:3000/register", {
+      const response = await axios.post("/register", {
         creds: {
           userName,
           password,

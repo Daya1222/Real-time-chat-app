@@ -4,7 +4,7 @@ let socket;
 
 export function getSocket({ token }) {
   if (!socket)
-    socket = io("http://localhost:3000", {
+    socket = io("/", {
       auth: { token: token },
     });
   return socket;

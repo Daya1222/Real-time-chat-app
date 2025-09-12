@@ -36,8 +36,8 @@ function Home() {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
         const [userRes, msgRes] = await Promise.all([
-          axios.get("http://localhost:3000/api/get-users", config),
-          axios.get("http://localhost:3000/api/get-messages", config),
+          axios.get("/api/get-users", config),
+          axios.get("/api/get-messages", config),
         ]);
 
         setUsers(userRes.data);

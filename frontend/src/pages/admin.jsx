@@ -14,7 +14,7 @@ function Admin() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:3000/api/delete-user",
+        "/api/delete-user",
         { userName: userNameToDelete },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -9,21 +9,22 @@ dotenv.config();
 const SECRET_KEY = process.env.JWT_SECRET;
 
 //Authorization
-function authorize(req, res, next) {
-  const authHeader = req.headers["authorization"]; // note: lowercase 'headers'
-
-  if (!authHeader) {
+async function authorize(req, res, next) {
+  const authHeader = req.headers["authorization"]; // lowercase 'headers'
+  if (!authHeader)
     return res.status(401).json({ message: "No token provided" });
-  }
 
   const token = authHeader.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "token malformed" });
-  }
+  if (!token) return res.status(401).json({ message: "Token malformed" });
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const userExists = await Users.findOne({ userName: decoded.userName });
+    if (!userExists) {
+      return res.status(401).json({ message: "User no longer exists" });
+    }
+
     req.user = decoded;
     next();
   } catch (err) {
@@ -37,6 +38,7 @@ async function genToken(userName) {
   const payload = {
     _id: user._id,
     userName: userName,
+    role: user.role,
   };
 
   return jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
@@ -52,7 +54,6 @@ async function login(req, res) {
   } else if (!password) {
     return res.status(400).json({ msg: "No password" });
   }
-  //if both are provided get the password hash for that specific user.
 
   const user = await Users.findOne({ userName: userName });
   if (!user) {
@@ -65,14 +66,14 @@ async function login(req, res) {
   if (await bcrypt.compare(password, passwordHash)) {
     res.status(200).json({
       token: await genToken(userName),
-      user: { _id: user._id, userName: user.userName },
+      user: { _id: user._id, userName: user.userName, role: user.role },
     });
   } else {
     return res.status(401).json({ msg: "Unauthorized" });
   }
 }
 
-//Hashing and login logic
+//Hashing and register logic
 
 function hasher(password) {
   const saltRounds = 10;
@@ -106,13 +107,29 @@ async function register(req, res, next) {
   }
 }
 
-async function isAdmin(req, res, next) {
-  const user = req.user;
-  const reqUser = await Users.findOne({ _id: user._id });
-  if (reqUser.role === "admin") {
-    next();
-  } else {
-    return res.status(401).json({ msg: "Unauthorized" });
+//Checks if admin
+function isAdmin(req, res, next) {
+  const authHeader = req.headers["authorization"]; // note: lowercase 'headers'
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "token malformed" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    if (decoded.role === "admin") {
+      next();
+    } else {
+      return res.status(403).json({ msg: "Forbidden" });
+    }
+  } catch (err) {
+    res.status(401).json({ msg: "Unauthorized" });
   }
 }
 

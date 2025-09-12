@@ -1,67 +1,85 @@
 import { getSocket } from "../components/socket";
 import UserCard from "../components/userCard";
+import ChatBubble from "../components/chatBubble";
 import "../css/home-page.css";
+import profilePic from "../assets/profile.png";
 import { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { RefreshContext } from "../components/refreshContext";
-import ChatBubble from "../components/chatBubble";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Home() {
-  const [text, setText] = useState("");
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
-  const { refresh, setRefresh, globalUser } = useContext(RefreshContext);
-  const [messages, setMessages] = useState([]);
-  const chatWindowRef = useRef(null);
-  const socket = getSocket({ token: localStorage.getItem("token") });
+  const [text, setText] = useState(""); // input box text
+  const [selectedUser, setSelectedUser] = useState(""); // chat target
+  const [messages, setMessages] = useState([]); // current chat messages
 
+  const chatWindowRef = useRef(null); // scrollable chat window
+
+  const {
+    users,
+    setUsers,
+    refresh,
+    setRefresh,
+    globalUser,
+    onlineUsers,
+    setOnlineUsers,
+  } = useContext(RefreshContext);
+
+  const socket = getSocket({ token: localStorage.getItem("token") });
+  const navigate = useNavigate();
+
+  // fetch initial users and messages
   useEffect(() => {
     async function fetchData() {
       try {
         const token = localStorage.getItem("token");
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
-        const [responseUsers, responseMessages] = await Promise.all([
+        const [userRes, msgRes] = await Promise.all([
           axios.get("http://localhost:3000/api/get-users", config),
           axios.get("http://localhost:3000/api/get-messages", config),
         ]);
 
-        setUsers(responseUsers.data);
-        setMessages(responseMessages.data);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
+        setUsers(userRes.data);
+        setMessages(msgRes.data);
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
       }
     }
+
     fetchData();
   }, [refresh]);
 
+  // socket listeners: messages, new users, online users
   useEffect(() => {
     socket.on("messageSent", (msg) => {
-      if (
-        (msg.sender === globalUser.userName && msg.receiver === selectedUser) ||
-        (msg.sender === selectedUser && msg.receiver === globalUser.userName)
-      ) {
-        setMessages((prev) => [...prev, msg]);
-      }
+      setMessages((prev) => [...prev, msg]);
     });
 
-    socket.on("newRegistration", (newUser) => {
-      console.log("New user registered:", newUser);
-      setRefresh((prev) => !prev);
+    socket.on("newRegistration", (newUser) => setRefresh((prev) => !prev));
+    socket.on("onlineUsers", (onlineList) => setOnlineUsers(onlineList));
+    socket.on("forceLogout", (data) => {
+      alert(data.msg);
+      localStorage.removeItem("token");
+      navigate("/");
     });
 
     return () => {
-      socket.off("newRegistration");
       socket.off("messageSent");
+      socket.off("newRegistration");
+      socket.off("onlineUsers");
+      socket.off("forceLogout");
     };
-  }, [setRefresh, selectedUser, globalUser.userName]);
+  }, [selectedUser, globalUser.userName, setRefresh, setOnlineUsers, navigate]);
 
+  // auto-scroll chat window
   useEffect(() => {
     if (chatWindowRef.current) {
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
     }
   }, [messages]);
 
+  // send a chat message
   function sendMessage() {
     if (!text.trim() || !selectedUser) return;
 
@@ -75,83 +93,97 @@ function Home() {
     setText("");
   }
 
+  // get the last message with a specific user
+
+  const lastMessagesMap = messages.reduce((acc, msg) => {
+    const otherUser =
+      msg.sender === globalUser.userName ? msg.receiver : msg.sender;
+    if (
+      !acc[otherUser] ||
+      new Date(msg.createdAt) > new Date(acc[otherUser].createdAt)
+    ) {
+      acc[otherUser] = msg;
+    }
+    return acc;
+  }, {});
+
+  // show user list if no chat selected
   if (!selectedUser) {
+    const showableUsers = users.filter(
+      (u) =>
+        u.userName !== globalUser.userName && onlineUsers.includes(u.userName)
+    );
+
     return (
-      <div className="home-page">
-        <div className="user-list">
-          {users
-            .filter((user) => user.userName !== globalUser.userName)
-            .map((user) => (
+      <div className="home-page-list">
+        <div className="user-list-only">
+          {showableUsers.length > 0 ? (
+            showableUsers.map((user) => (
               <UserCard
                 key={user._id}
                 userName={user.userName}
+                profilePic={profilePic}
+                lastMessage={lastMessagesMap[user.userName]?.text || ""}
                 onClick={() => {
                   setRefresh((prev) => !prev);
                   setSelectedUser(user.userName);
                 }}
               />
-            ))}
-        </div>
-        <div className="select-chat-prompt">
-          <h1>Select a user to chat.</h1>
+            ))
+          ) : (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              No user online
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
+  // chat window
   return (
     <div className="home-page">
-      <div className="user-list">
-        {users
-          .filter((user) => user.userName !== globalUser.userName)
-          .map((user) => (
-            <UserCard
-              key={user._id}
-              userName={user.userName}
-              onClick={() =>
-                setSelectedUser(
-                  selectedUser === user.userName ? "" : user.userName
-                )
-              }
-            />
-          ))}
-      </div>
-
       <div className="chat-window">
         <div className="chat-header">
           <div className="profile-Pic">
-            <img alt="profilepic" className="profile-Pic" />
+            <img src={profilePic} alt="profilepic" className="pic" />
           </div>
-          <div className="user-Name">{selectedUser}</div>
+          <div className="user-name">{selectedUser}</div>
+          <button className="exit-button" onClick={() => setSelectedUser("")}>
+            X
+          </button>
         </div>
 
-        <div className="chatwindow" ref={chatWindowRef}>
-          {messages
-            .filter(
-              (m) =>
-                (m.sender === globalUser.userName &&
-                  m.receiver === selectedUser) ||
-                (m.sender === selectedUser &&
-                  m.receiver === globalUser.userName)
-            )
-            .map((message) => (
-              <ChatBubble
-                key={message._id}
-                text={message.text}
-                sender={message.sender}
-              />
-            ))}
+        <div className="chatwindow">
+          <div className="messages" ref={chatWindowRef}>
+            {messages
+              .filter(
+                (m) =>
+                  (m.sender === globalUser.userName &&
+                    m.receiver === selectedUser) ||
+                  (m.sender === selectedUser &&
+                    m.receiver === globalUser.userName)
+              )
+              .map((message) => (
+                <ChatBubble
+                  key={message._id}
+                  text={message.text}
+                  sender={message.sender}
+                />
+              ))}
+          </div>
         </div>
 
-        <div className="chatbox">
+        <div className="chat-box">
           <input
+            className="input-box"
             type="text"
             placeholder="Type your message here."
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
-          <button className="send" onClick={sendMessage}>
+          <button className="send-button" onClick={sendMessage}>
             Send
           </button>
         </div>

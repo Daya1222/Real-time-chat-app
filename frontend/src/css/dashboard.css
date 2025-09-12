@@ -40,6 +40,9 @@
 }
 
 .dashboard .Logout {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: 0;
   background-color: #ffcccc; /* Light red for contrast */
   color: #c93b3b; /* Darker red for text */
   border: 1px solid #ffb3b3;
@@ -47,4 +50,19 @@
 
 .dashboard .Logout:hover {
   background-color: #ffb3b3;
+}
+
+.dashboard .current-user {
+  padding: 10px 20px;
+  border: 2px solid green;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2e8b57;
+  background-color: #e6f2e6;
+  border: 1px solid #d4e8d4;
+  border-radius: 8px;
+  margin-left: 15px;
+  white-space: nowrap;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }

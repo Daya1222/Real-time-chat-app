@@ -1,0 +1,3 @@
+POST http://localhost:3000/api/verify-admin
+Headers:
+Authorization: Bearer <your_token_here>

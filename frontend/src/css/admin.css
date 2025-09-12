@@ -1,0 +1,96 @@
+.admin-page {
+  border: 1px solid #d9e6d9;
+  border-radius: 10px;
+  width: 100vw;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f7fff7;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding: 10px 20px;
+  background-color: #f0fff0;
+  border-bottom: 1px solid #d9e6d9;
+  border-radius: 10px 10px 0 0;
+  flex-shrink: 0;
+  min-height: 70px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header h1 {
+  margin: 0;
+  color: #2e7d32;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.user-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #ffffff;
+  border-radius: 0 0 10px 10px;
+  border-top: 1px solid #d9e6d9;
+  scroll-behavior: smooth;
+  min-height: 0;
+}
+
+/* Custom scrollbar styling */
+.user-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.user-list::-webkit-scrollbar-track {
+  background: #f0fff0;
+  border-radius: 3px;
+}
+
+.user-list::-webkit-scrollbar-thumb {
+  background: #c8e6c9;
+  border-radius: 3px;
+  border: 1px solid #a5d6a7;
+}
+
+.user-list::-webkit-scrollbar-thumb:hover {
+  background: #a5d6a7;
+}
+
+.header button {
+  background-color: #2e7d32;
+  color: #ffffff;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-right: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header button:hover {
+  background-color: #4caf50;
+  border-color: #66bb6a;
+}
+
+.header button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+.header button.active {
+  background-color: #81c784;
+  color: #1b5e20;
+  border-color: #66bb6a;
+}

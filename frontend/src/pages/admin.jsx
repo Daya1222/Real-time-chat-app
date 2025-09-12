@@ -58,7 +58,7 @@ function Admin() {
             />
           ))
         ) : (
-          <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <div style={{ textAlign: "center", marginTop: "20px", fontSize: 20 }}>
             {filter === "online" ? "No users online" : "No users available"}
           </div>
         )}

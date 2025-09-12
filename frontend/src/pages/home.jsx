@@ -131,8 +131,10 @@ function Home() {
               />
             ))
           ) : (
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-              No user online
+            <div
+              style={{ textAlign: "center", marginTop: "20px", fontSize: 20 }}
+            >
+              No other users.
             </div>
           )}
         </div>

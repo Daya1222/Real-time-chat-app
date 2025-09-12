@@ -77,7 +77,7 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 <div align="center">
 
 ### Chat Interface
-*Real-time messaging with status indicators*
+![Chat UI](backend/assets/chat-interface.jpg)
 
 ### Admin Dashboard
 *User management and monitoring panel*

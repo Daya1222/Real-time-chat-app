@@ -8,6 +8,7 @@ import { RefreshContext } from "../components/refreshContext";
 function Login() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setGlobalUser } = useContext(RefreshContext);
 
@@ -25,6 +26,7 @@ function Login() {
       navigate("/home");
     } catch (err) {
       console.log(err);
+      setError("Incorrect username or password");
     }
   }
 
@@ -49,16 +51,25 @@ function Login() {
               value={userName}
               className="userName"
               autoComplete="userName"
-              onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => {
+                setUserName(e.target.value);
+                setError("");
+              }}
             />
+
             <input
               type="password"
               placeholder="********"
               value={password}
               className="password"
               autoComplete="current-password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
             />
+
+            {error && <div className="error-msg">{error}</div>}
             <button type="submit" className="login-button">
               Login
             </button>

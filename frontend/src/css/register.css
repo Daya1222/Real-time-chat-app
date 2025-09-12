@@ -177,3 +177,15 @@
     margin-bottom: 20px;
   }
 }
+
+.input-error {
+  border: 2px solid #e74c3c !important;
+  background: #ffeaea;
+}
+
+.error-msg {
+  font-size: 12px;
+  color: #e74c3c;
+  margin: 0 0 8px 0;
+  text-align: left;
+}

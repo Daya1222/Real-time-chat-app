@@ -24,7 +24,7 @@ function Dashboard({ children, hide }) {
           }}
         >
           <img src={logo} alt="chatapp.png" height={40} className="image" />
-          <div className="text">Chat app</div>
+          <div className="text">SocketTalk</div>
         </div>
 
         {hide !== "button" ? (

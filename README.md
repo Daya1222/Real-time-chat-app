@@ -76,11 +76,14 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 
 <div align="center">
 
-### Chat Interface
-![Chat UI](backend/assets/chat-interface.jpg)
+## 📸 Demo Screenshots
 
-### Admin Dashboard
-*User management and monitoring panel*
+<p align="center">
+  <img src="backend/assets/Contacts.jpg" alt="Users" width="30%" />
+  <img src="backend/assets/chat-interface.jpg" alt="Chat" width="30%" />
+  <img src="backend/assets/login.jpg" alt="login" width="30%" />
+</p>
+
 
 </div>
 

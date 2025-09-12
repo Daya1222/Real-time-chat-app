@@ -58,7 +58,6 @@ A modern, full-stack real-time chat application built with the MERN stack and So
    # Frontend dependencies
    cd frontend
    npm install
-   cd ..
    ```
 
 3. **Environment Setup**
@@ -90,7 +89,7 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 
 <p align="center">
   <img src="backend/assets/login.jpeg" alt="Users" width="30%" />
-  <img src="backend/assets/uses.jpeg" alt="Chat" width="30%" />
+  <img src="backend/assets/users.jpeg" alt="Chat" width="30%" />
   <img src="backend/assets/chat.jpeg" alt="login" width="30%" />
 </p>
 
@@ -133,8 +132,8 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 │   ├── src/
 │   │   ├── components/  # React components
 │   │   ├── pages/       # Main pages
-│   │   ├── css/       # Custom hooks
-│   │   └── assets      # Helper functions
+│   │   ├── css/         # Css
+│   │   └── assets       # pngs
 │   └── public/
 └── README.md
 ```

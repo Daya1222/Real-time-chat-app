@@ -50,10 +50,29 @@ function Home() {
     fetchData();
   }, [refresh]);
 
-  // socket listeners: messages, new users, online users
+  //socket listeners
   useEffect(() => {
-    socket.on("messageSent", (msg) => {
-      setMessages((prev) => [...prev, msg]);
+    socket.on("messageStatus", (updatedMsg) => {
+      setMessages((prev) => {
+        const exists = prev.find((m) => m._id === updatedMsg._id);
+        if (exists) {
+          return prev.map((m) =>
+            m._id === updatedMsg._id ? { ...m, status: updatedMsg.status } : m
+          );
+        } else {
+          return [...prev, updatedMsg];
+        }
+      });
+
+      if (
+        updatedMsg.sender !== globalUser.userName &&
+        updatedMsg.status === "sent"
+      ) {
+        socket.emit("messageDelivered", {
+          _id: updatedMsg._id,
+          senderName: updatedMsg.sender,
+        });
+      }
     });
 
     socket.on("newRegistration", (newUser) => setRefresh((prev) => !prev));
@@ -65,12 +84,34 @@ function Home() {
     });
 
     return () => {
-      socket.off("messageSent");
+      socket.off("messageStatus");
       socket.off("newRegistration");
       socket.off("onlineUsers");
       socket.off("forceLogout");
     };
-  }, [selectedUser, globalUser.userName, setRefresh, setOnlineUsers, navigate]);
+  }, [
+    selectedUser,
+    globalUser.userName,
+    setRefresh,
+    setOnlineUsers,
+    navigate,
+    socket,
+  ]);
+
+  useEffect(() => {
+    if (!selectedUser) return;
+
+    const unreadMessages = messages.filter((msg) => {
+      return msg.sender === selectedUser && msg.status !== "read";
+    });
+
+    unreadMessages.forEach((msg) => {
+      socket.emit("messageRead", {
+        _id: msg._id,
+        senderId: msg.senderId,
+      });
+    });
+  }, [selectedUser, messages, socket]);
 
   // auto-scroll chat window
   useEffect(() => {
@@ -148,7 +189,13 @@ function Home() {
       <div className="chat-window">
         <div className="chat-header">
           <div className="profile-Pic">
-            <img src={profilePic} alt="profilepic" className="pic" />
+            <img
+              src={profilePic}
+              alt="profilepic"
+              className={`pic ${
+                onlineUsers.includes(selectedUser) ? "online-ring" : ""
+              }`}
+            />
           </div>
           <div className="user-name">{selectedUser}</div>
           <button className="exit-button" onClick={() => setSelectedUser("")}>
@@ -171,6 +218,7 @@ function Home() {
                   key={message._id}
                   text={message.text}
                   sender={message.sender}
+                  msgStatus={message.status}
                 />
               ))}
           </div>

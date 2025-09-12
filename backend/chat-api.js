@@ -40,7 +40,7 @@ function emitOnlineUsers() {
 }
 
 // socket connection
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   const userName = socket.user.userName;
 
   // add user to connected list
@@ -49,6 +49,67 @@ io.on("connection", (socket) => {
 
   // notify everyone of online users
   emitOnlineUsers();
+
+  // === send undelivered messages if any ===
+  try {
+    const undeliveredMessages = await Messages.find({
+      receiver: userName,
+      status: "sent",
+    });
+
+    for (const msg of undeliveredMessages) {
+      // send to recipient
+      socket.emit("messageStatus", { ...msg.toObject(), status: "delivered" });
+
+      // mark as delivered in DB
+      await Messages.updateOne({ _id: msg._id }, { status: "delivered" });
+
+      // notify sender if online
+      const senderSocketId = connectedUsers[msg.sender];
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("messageStatus", {
+          _id: msg._id,
+          status: "delivered",
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Error sending undelivered messages:", err);
+  }
+
+  socket.on("messageDelivered", async ({ _id, senderName }) => {
+    try {
+      await Messages.updateOne({ _id }, { status: "delivered" });
+
+      const senderSocketId = connectedUsers[senderName];
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("messageStatus", {
+          _id,
+          status: "delivered",
+        });
+      }
+    } catch (err) {
+      console.error("Error updating delivered status:", err);
+    }
+  });
+
+  //handle message read conformation from sender
+
+  socket.on("messageRead", async ({ _id, senderId }) => {
+    try {
+      await Messages.updateOne({ _id }, { status: "read" });
+
+      const message = await Messages.findById(_id);
+      if (message) {
+        const senderSocketId = connectedUsers[message.sender];
+        if (senderSocketId) {
+          io.to(senderSocketId).emit("messageStatus", { _id, status: "read" });
+        }
+      }
+    } catch (err) {
+      console.error("Error marking message as read:", err);
+    }
+  });
 
   // handle sending messages
   socket.on("messageSent", async (msg) => {
@@ -65,16 +126,22 @@ io.on("connection", (socket) => {
         _id: savedMessage._id,
         text: msg.text,
         sender: userName,
+        senderId: socket.id,
         receiver: msg.receiver,
         createdAt: savedMessage.createdAt,
+        status: "sent",
       };
 
-      // send to sender
-      io.to(socket.id).emit("messageSent", messageToEmit);
+      // send confirmation to sender
+      socket.emit("messageStatus", messageToEmit);
 
       // send to receiver if online
       const receiverId = connectedUsers[msg.receiver];
-      if (receiverId) io.to(receiverId).emit("messageSent", messageToEmit);
+      if (receiverId)
+        io.to(receiverId).emit("messageStatus", {
+          ...messageToEmit,
+          status: "sent",
+        });
     } catch (error) {
       console.error("Error saving message:", error);
     }

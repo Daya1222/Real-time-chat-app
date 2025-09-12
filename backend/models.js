@@ -17,7 +17,7 @@ const messageSchema = mongoose.Schema(
     text: { type: String, required: true },
     sender: { type: String, required: true },
     receiver: { type: String, required: true },
-    readSratus: { type: Boolean, default: false },
+    status: { type: String, default: "sent" },
   },
   { timestamps: true }
 );

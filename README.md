@@ -135,8 +135,6 @@ This chat application demonstrates:
 - **Responsive UI/UX** design principles
 - **State management** in React applications
 
-Perfect for showcasing **production-ready development skills** and understanding of modern web application architecture.
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -151,6 +149,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ Star this repository if you found it helpful!**
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [Daya]
 
 </div>

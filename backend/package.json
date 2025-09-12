@@ -1,14 +1,15 @@
 {
   "name": "real-time-chat-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Real-time chat app with React frontend and Express backend",
   "license": "ISC",
   "author": "Daya Joshi",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "chat-api.js",
   "scripts": {
+    "start": "node chat-api.js",
     "dev": "nodemon chat-api.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "cd ../frontend && npm install && npm run build"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -18,7 +19,9 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
-    "nodemon": "^3.1.10",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

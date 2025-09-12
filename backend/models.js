@@ -1,7 +1,16 @@
 const mongoose = require("mongoose");
+require("dotenv").config(); // Load .env variables
 
-mongoose.connect("mongodb://localhost:27017/chat");
+// Connect to MongoDB Atlas
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Atlas connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
+// Schemas
 const userSchema = mongoose.Schema(
   {
     userName: { type: String, required: true, unique: true },
@@ -12,6 +21,7 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const messageSchema = mongoose.Schema(
   {
     text: { type: String, required: true },
@@ -22,6 +32,7 @@ const messageSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// Models
 const Users = mongoose.model("users", userSchema);
 const Messages = mongoose.model("messages", messageSchema);
 

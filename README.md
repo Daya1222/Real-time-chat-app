@@ -89,9 +89,9 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 ## 📸 Demo Screenshots
 
 <p align="center">
-  <img src="backend/assets/login.jpg" alt="Users" width="30%" />
-  <img src="backend/assets/uses.jpg" alt="Chat" width="30%" />
-  <img src="backend/assets/chat.jpg" alt="login" width="30%" />
+  <img src="backend/assets/login.jpeg" alt="Users" width="30%" />
+  <img src="backend/assets/uses.jpeg" alt="Chat" width="30%" />
+  <img src="backend/assets/chat.jpeg" alt="login" width="30%" />
 </p>
 
 </div>

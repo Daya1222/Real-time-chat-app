@@ -39,17 +39,18 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/realtime-chat-app.git
-   cd realtime-chat-app
+   git clone https://github.com/Daya1222/Real-time-chat-app.git
+   cd Real-time-chat-app
    ```
 
 2. **Install dependencies**
    ```bash
    # Backend dependencies
+   cd backend
    npm install
    
    # Frontend dependencies
-   cd client
+   cd frontend
    npm install
    cd ..
    ```
@@ -57,9 +58,7 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 3. **Environment Setup**
    ```bash
    # Create .env file in root directory
-   MONGODB_URI=mongodb://localhost:27017/chatapp
    JWT_SECRET=your_jwt_secret_here
-   PORT=5000
    ```
 
 4. **Start the application**
@@ -67,14 +66,10 @@ A modern, full-stack real-time chat application built with the MERN stack and So
    # Development mode (runs both frontend and backend)
    npm run dev
    
-   # Or run separately
-   npm start              # Backend only
-   cd client && npm start # Frontend only
-   ```
 
 5. **Open your browser**
    ```
-   http://localhost:3000
+   http://localhost:5173
    ```
 
 ## 📱 Screenshots
@@ -114,17 +109,16 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 ## 🏗️ Project Structure
 
 ```
-├── server/
-│   ├── models/          # MongoDB schemas
-│   ├── routes/          # API endpoints
-│   ├── middleware/      # Auth & validation
-│   └── socket/          # Socket.IO handlers
-├── client/
+├── backend/
+│   ├── models.jsx         # MongoDB schemas
+│   ├── chat-apis.jsx      # API endpoints/socket.IO handlers
+│   └── auth.jsx           # Auth & validation
+├── frontend/
 │   ├── src/
 │   │   ├── components/  # React components
 │   │   ├── pages/       # Main pages
-│   │   ├── hooks/       # Custom hooks
-│   │   └── utils/       # Helper functions
+│   │   ├── css/       # Custom hooks
+│   │   └── assets      # Helper functions
 │   └── public/
 └── README.md
 ```

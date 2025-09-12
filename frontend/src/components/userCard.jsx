@@ -28,15 +28,12 @@ function UserCard({
   }
   return (
     <div className="userCard" onClick={onClick}>
-      <div className="profile-pic">
+      <div className={`status-ring ${status ? "online" : "offline"}`}>
         <img src={profilePic} alt="" className="pic" />
       </div>
       <div className="user-info">
         <div className="userName">{userName}</div>
         <div className="last-message">{lastMessage}</div>
-      </div>
-      <div className="status">
-        {status ? <div className="online" /> : <div className="offline" />}
       </div>
     </div>
   );

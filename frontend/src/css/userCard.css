@@ -89,16 +89,27 @@
   transition: opacity 0.2s, transform 0.2s;
 }
 
-.offline {
-  height: 20px;
-  width: 20px;
-  border-radius: 100px;
-  background-color: #bb230e;
+.status-ring {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.online {
-  height: 20px;
-  width: 20px;
-  border-radius: 100px;
-  background-color: #2e7d32;
+.status-ring.online {
+  border: 2px solid #4caf50;
+}
+
+.status-ring.offline {
+  border: 2px solid #ccc;
+}
+
+.pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }

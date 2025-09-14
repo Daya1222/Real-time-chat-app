@@ -24,6 +24,7 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 - **Error handling** with visual feedback
 - **Responsive design** for all devices
 - **Intuitive UI/UX** with modern design patterns
+- **Live Notification** for new messages
 
 ## 🛠️ Tech Stack
 

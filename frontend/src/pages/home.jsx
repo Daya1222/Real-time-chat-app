@@ -50,6 +50,31 @@ function Home() {
     fetchData();
   }, [refresh]);
 
+  // Request notification permission
+  useEffect(() => {
+    function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        console.warn("This browser does not support notifications.");
+      } else if (Notification.permission === "default") {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            console.log("Notification permission granted!");
+          } else {
+            console.log("Notification permission denied");
+          }
+        });
+      }
+    }
+    requestNotificationPermission();
+  }, []);
+
+  // Show notification
+  function showNotification(title, options = {}) {
+    if (Notification.permission === "granted") {
+      new Notification(title, options);
+    }
+  }
+
   //socket listeners
   useEffect(() => {
     socket.on("messageStatus", (updatedMsg) => {
@@ -60,6 +85,15 @@ function Home() {
             m._id === updatedMsg._id ? { ...m, status: updatedMsg.status } : m
           );
         } else {
+          if (
+            updatedMsg.sender !== globalUser.userName &&
+            updatedMsg.sender !== selectedUser
+          ) {
+            showNotification(`New Message from ${updatedMsg.sender}`, {
+              body: updatedMsg.text,
+              icon: profilePic,
+            });
+          }
           return [...prev, updatedMsg];
         }
       });

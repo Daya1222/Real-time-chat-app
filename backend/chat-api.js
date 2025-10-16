@@ -22,9 +22,11 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 // Determine allowed origins
 const allowedOrigins =
     NODE_ENV === "production"
-        ? [process.env.FRONTEND_URL, process.env.RAILWAY_PUBLIC_DOMAIN].filter(
-              Boolean,
-          )
+        ? [
+              process.env.FRONTEND_URL,
+              // Add your Render domain here
+              `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`,
+          ].filter(Boolean)
         : ["http://localhost:5173", "http://localhost:3000"];
 
 // Track online users: { username: socketId }
@@ -37,6 +39,9 @@ const io = new Server(httpServer, {
         credentials: true,
         methods: ["GET", "POST"],
     },
+    // Add these for better WebSocket support on Render
+    transports: ["websocket", "polling"],
+    allowEIO3: true,
 });
 
 // Middleware
@@ -270,7 +275,7 @@ app.post("/api/delete-user", isAdmin, async (req, res) => {
     }
 });
 
-// Health check endpoint (useful for Railway)
+// Health check endpoint (useful for Render)
 app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });

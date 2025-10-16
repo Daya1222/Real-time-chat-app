@@ -8,7 +8,8 @@
     "main": "chat-api.js",
     "scripts": {
         "start": "node chat-api.js",
-        "dev": "nodemon chat-api.js"
+        "dev": "nodemon chat-api.js",
+        "build": "cd ../frontend && npm install && npm run build && cd ../backend"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",

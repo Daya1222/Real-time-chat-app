@@ -5,7 +5,7 @@ import Home from "./pages/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PublicRoutes, ProtectedRoutes } from "./components/redirectHandler";
 import Register from "./pages/register";
-import Info from "./pages/info";
+import Info from "./pages/Info.jsx";
 import Dashboard from "./components/dashboard";
 import { RefreshContext } from "./components/refreshContext.jsx";
 import Admin from "./pages/admin.jsx";

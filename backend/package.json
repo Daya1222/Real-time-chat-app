@@ -1,27 +1,26 @@
 {
-  "name": "real-time-chat-app",
-  "version": "1.0.0",
-  "description": "Real-time chat app with React frontend and Express backend",
-  "license": "ISC",
-  "author": "Daya Joshi",
-  "type": "commonjs",
-  "main": "chat-api.js",
-  "scripts": {
-    "start": "node chat-api.js",
-    "dev": "nodemon chat-api.js",
-    "postinstall": "cd ../frontend && npm install && npm run build"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
-    "express": "^5.1.0",
-    "http": "^0.0.1-security",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.0",
-    "socket.io": "^4.8.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+    "name": "real-time-chat-app",
+    "version": "1.0.0",
+    "description": "Real-time chat app with React frontend and Express backend",
+    "license": "ISC",
+    "author": "Daya Joshi",
+    "type": "commonjs",
+    "main": "chat-api.js",
+    "scripts": {
+        "start": "node chat-api.js",
+        "dev": "nodemon chat-api.js"
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.2",
+        "express": "^5.1.0",
+        "http": "^0.0.1-security",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.18.0",
+        "socket.io": "^4.8.1"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.10"
+    }
 }

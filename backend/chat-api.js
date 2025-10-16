@@ -2,6 +2,7 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const path = require("path");
 const {
   login,
   authorize,
@@ -12,18 +13,49 @@ const {
 const { Messages, Users } = require("./models.js");
 
 const app = express();
-
 const httpServer = createServer(app);
+
+// Environment variables
+const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+// Determine allowed origins
+const allowedOrigins = 
+  NODE_ENV === "production"
+    ? [process.env.FRONTEND_URL, process.env.RAILWAY_PUBLIC_DOMAIN].filter(Boolean)
+    : ["http://localhost:5173", "http://localhost:3000"];
 
 // Track online users: { username: socketId }
 const connectedUsers = {};
 
-// socket.io setup
+// Socket.io setup with dynamic CORS
 const io = new Server(httpServer, {
-  cors: { origin: "http://localhost:5173" },
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
 });
 
-// socket authentication
+// Middleware
+app.use(express.json());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// Socket authentication
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   const tokenData = isAuthorized(token);
@@ -40,32 +72,32 @@ function emitOnlineUsers() {
   io.emit("onlineUsers", Object.keys(connectedUsers));
 }
 
-// socket connection
+// Socket connection
 io.on("connection", async (socket) => {
   const userName = socket.user.userName;
-
-  // add user to connected list
+  
+  // Add user to connected list
   connectedUsers[userName] = socket.id;
-  console.log("user connected", socket.id, userName);
-
-  // notify everyone of online users
+  console.log("User connected:", socket.id, userName);
+  
+  // Notify everyone of online users
   emitOnlineUsers();
 
-  // === send undelivered messages if any ===
+  // === Send undelivered messages if any ===
   try {
     const undeliveredMessages = await Messages.find({
       receiver: userName,
       status: "sent",
     });
-
+    
     for (const msg of undeliveredMessages) {
-      // send to recipient
+      // Send to recipient
       socket.emit("messageStatus", { ...msg.toObject(), status: "delivered" });
-
-      // mark as delivered in DB
+      
+      // Mark as delivered in DB
       await Messages.updateOne({ _id: msg._id }, { status: "delivered" });
-
-      // notify sender if online
+      
+      // Notify sender if online
       const senderSocketId = connectedUsers[msg.sender];
       if (senderSocketId) {
         io.to(senderSocketId).emit("messageStatus", {
@@ -81,7 +113,6 @@ io.on("connection", async (socket) => {
   socket.on("messageDelivered", async ({ _id, senderName }) => {
     try {
       await Messages.updateOne({ _id }, { status: "delivered" });
-
       const senderSocketId = connectedUsers[senderName];
       if (senderSocketId) {
         io.to(senderSocketId).emit("messageStatus", {
@@ -94,12 +125,10 @@ io.on("connection", async (socket) => {
     }
   });
 
-  //handle message read conformation from sender
-
+  // Handle message read confirmation from sender
   socket.on("messageRead", async ({ _id, senderId }) => {
     try {
       await Messages.updateOne({ _id }, { status: "read" });
-
       const message = await Messages.findById(_id);
       if (message) {
         const senderSocketId = connectedUsers[message.sender];
@@ -112,17 +141,17 @@ io.on("connection", async (socket) => {
     }
   });
 
-  // handle sending messages
+  // Handle sending messages
   socket.on("messageSent", async (msg) => {
     if (!msg || !msg.text) return;
-
+    
     try {
       const savedMessage = await Messages.create({
         text: msg.text,
         sender: userName,
         receiver: msg.receiver,
       });
-
+      
       const messageToEmit = {
         _id: savedMessage._id,
         text: msg.text,
@@ -132,60 +161,61 @@ io.on("connection", async (socket) => {
         createdAt: savedMessage.createdAt,
         status: "sent",
       };
-
-      // send confirmation to sender
+      
+      // Send confirmation to sender
       socket.emit("messageStatus", messageToEmit);
-
-      // send to receiver if online
+      
+      // Send to receiver if online
       const receiverId = connectedUsers[msg.receiver];
-      if (receiverId)
+      if (receiverId) {
         io.to(receiverId).emit("messageStatus", {
           ...messageToEmit,
           status: "sent",
         });
+      }
     } catch (error) {
       console.error("Error saving message:", error);
     }
   });
 
-  // handle disconnect
+  // Handle disconnect
   socket.on("disconnect", () => {
     delete connectedUsers[userName];
-    console.log("user disconnected", socket.id, userName);
-
-    // notify everyone of updated online users
+    console.log("User disconnected:", socket.id, userName);
+    
+    // Notify everyone of updated online users
     emitOnlineUsers();
   });
 });
 
-// middleware
-app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// ============ API Routes ============
 
-// login/register
+// Login/Register
 app.post("/login", login);
+
 app.post("/register", register, (req, res) => {
-  // notify everyone about new user
+  // Notify everyone about new user
   io.emit("newRegistration", req.user.userName);
   res.status(200).json({ msg: "User successfully created." });
 });
 
-// admin verify
+// Admin verify
 app.post("/api/verify-admin", isAdmin, (req, res) => {
   res.status(200).json({ msg: "Admin verified successfully." });
 });
 
-// get users
+// Get users
 app.get("/api/get-users", authorize, async (req, res) => {
   try {
     const users = await Users.find().select("_id userName email role");
     res.status(200).json(users);
   } catch (err) {
+    console.error("Error fetching users:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
 
-// get messages
+// Get messages
 app.get("/api/get-messages", authorize, async (req, res) => {
   try {
     const userName = req.user.userName;
@@ -194,17 +224,18 @@ app.get("/api/get-messages", authorize, async (req, res) => {
     });
     res.status(200).json(messages);
   } catch (err) {
+    console.error("Error fetching messages:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
 
-// delete user (admin only)
+// Delete user (admin only)
 app.post("/api/delete-user", isAdmin, async (req, res) => {
   try {
     const user = await Users.findOne({ userName: req.body.userName });
     if (!user) return res.status(404).json({ msg: "User not found." });
 
-    // emit a custom 'forceLogout' event if user is online
+    // Emit a custom 'forceLogout' event if user is online
     const socketId = connectedUsers[user.userName];
     if (socketId) {
       io.to(socketId).emit("forceLogout", {
@@ -212,33 +243,52 @@ app.post("/api/delete-user", isAdmin, async (req, res) => {
       });
     }
 
-    // delete user and messages
+    // Delete user and messages
     await Users.deleteOne({ _id: user._id });
     await Messages.deleteMany({
       $or: [{ sender: user.userName }, { receiver: user.userName }],
     });
 
-    // remove from connected users from array
+    // Remove from connected users
     if (socketId) delete connectedUsers[user.userName];
 
     res.status(200).json({ msg: "User deleted" });
   } catch (err) {
+    console.error("Error deleting user:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
 
-const path = require("path");
+// Health check endpoint (useful for Railway)
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-// Serve frontend build
+// ============ Serve Frontend ============
+
+// Serve static files from frontend build
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// Fallback to index.html for SPA routing
-app.use((req, res) => {
+// Fallback to index.html for SPA routing (must be last)
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
 });
 
-// start server
-const PORT = 3000;
-httpServer.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+// ============ Start Server ============
+
+httpServer.listen(PORT, "0.0.0.0", () => {
+  console.log(`
+    🚀 Server is running!
+    📡 Port: ${PORT}
+    🌍 Environment: ${NODE_ENV}
+    ${NODE_ENV === "production" ? `🔗 Frontend URL: ${process.env.FRONTEND_URL || "Not set"}` : ""}
+  `);
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM signal received: closing HTTP server");
+  httpServer.close(() => {
+    console.log("HTTP server closed");
+  });
 });

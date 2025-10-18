@@ -24,7 +24,6 @@ const allowedOrigins =
     NODE_ENV === "production"
         ? [
               process.env.FRONTEND_URL,
-              // Add your Render domain here
               `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`,
           ].filter(Boolean)
         : ["http://localhost:5173", "http://localhost:3000"];
@@ -39,7 +38,6 @@ const io = new Server(httpServer, {
         credentials: true,
         methods: ["GET", "POST"],
     },
-    // Add these for better WebSocket support on Render
     transports: ["websocket", "polling"],
     allowEIO3: true,
 });
@@ -49,7 +47,6 @@ app.use(express.json());
 app.use(
     cors({
         origin: function (origin, callback) {
-            // Allow requests with no origin (mobile apps, Postman, etc.)
             if (!origin) return callback(null, true);
 
             if (
@@ -88,7 +85,7 @@ io.on("connection", async (socket) => {
 
     // Add user to connected list
     connectedUsers[userName] = socket.id;
-    console.log("User connected:", socket.id, userName);
+    console.log("✅ User connected:", socket.id, userName);
 
     // Notify everyone of online users
     emitOnlineUsers();
@@ -100,8 +97,12 @@ io.on("connection", async (socket) => {
             status: "sent",
         });
 
+        console.log(
+            `📬 Sending ${undeliveredMessages.length} undelivered messages to ${userName}`,
+        );
+
         for (const msg of undeliveredMessages) {
-            // Send to recipient
+            // Send to recipient with delivered status
             socket.emit("messageStatus", {
                 ...msg.toObject(),
                 status: "delivered",
@@ -110,9 +111,9 @@ io.on("connection", async (socket) => {
             // Mark as delivered in DB
             await Messages.updateOne({ _id: msg._id }, { status: "delivered" });
 
-            // Notify sender if online
+            // Notify sender if online AND different socket
             const senderSocketId = connectedUsers[msg.sender];
-            if (senderSocketId) {
+            if (senderSocketId && senderSocketId !== socket.id) {
                 io.to(senderSocketId).emit("messageStatus", {
                     _id: msg._id,
                     status: "delivered",
@@ -120,46 +121,70 @@ io.on("connection", async (socket) => {
             }
         }
     } catch (err) {
-        console.error("Error sending undelivered messages:", err);
+        console.error("❌ Error sending undelivered messages:", err);
     }
 
+    // Handle message delivered confirmation
     socket.on("messageDelivered", async ({ _id, senderName }) => {
         try {
             await Messages.updateOne({ _id }, { status: "delivered" });
             const senderSocketId = connectedUsers[senderName];
-            if (senderSocketId) {
+
+            // Only notify sender if it's a different socket
+            if (senderSocketId && senderSocketId !== socket.id) {
                 io.to(senderSocketId).emit("messageStatus", {
                     _id,
                     status: "delivered",
                 });
+                console.log(`📨 Delivered: ${senderName} (${_id.slice(-6)})`);
             }
         } catch (err) {
-            console.error("Error updating delivered status:", err);
+            console.error("❌ Error updating delivered status:", err);
         }
     });
 
-    // Handle message read confirmation from sender
+    // Handle message read confirmation
     socket.on("messageRead", async ({ _id, senderId }) => {
         try {
-            await Messages.updateOne({ _id }, { status: "read" });
+            // First check current status to avoid unnecessary updates
             const message = await Messages.findById(_id);
-            if (message) {
-                const senderSocketId = connectedUsers[message.sender];
-                if (senderSocketId) {
-                    io.to(senderSocketId).emit("messageStatus", {
-                        _id,
-                        status: "read",
-                    });
-                }
+
+            if (!message) {
+                console.log(`! Message ${_id} not found`);
+                return;
+            }
+
+            // Skip if already marked as read (NO LOG - this is expected)
+            if (message.status === "read") {
+                return;
+            }
+
+            // Update to read
+            await Messages.updateOne({ _id }, { status: "read" });
+
+            const senderSocketId = connectedUsers[message.sender];
+
+            // Only notify sender if it's a different socket
+            if (senderSocketId && senderSocketId !== socket.id) {
+                io.to(senderSocketId).emit("messageStatus", {
+                    _id,
+                    status: "read",
+                });
+                console.log(
+                    `📖 Read receipt: ${message.sender} ← ${message.receiver} (${_id.slice(-6)})`,
+                );
             }
         } catch (err) {
-            console.error("Error marking message as read:", err);
+            console.error("❌ Error marking message as read:", err);
         }
     });
 
     // Handle sending messages
     socket.on("messageSent", async (msg) => {
-        if (!msg || !msg.text) return;
+        if (!msg || !msg.text) {
+            console.log("! Empty message received, ignoring");
+            return;
+        }
 
         try {
             const savedMessage = await Messages.create({
@@ -178,26 +203,45 @@ io.on("connection", async (socket) => {
                 status: "sent",
             };
 
-            // Send confirmation to sender
+            // Get receiver socket ID
+            const receiverId = connectedUsers[msg.receiver];
+
+            // Log concisely
+            const msgPreview =
+                msg.text.length > 30
+                    ? msg.text.substring(0, 30) + "..."
+                    : msg.text;
+            const receiverStatus = receiverId
+                ? receiverId === socket.id
+                    ? "self"
+                    : "online"
+                : "offline";
+            console.log(
+                `💬 ${userName} → ${msg.receiver} [${receiverStatus}]: "${msgPreview}"`,
+            );
+
+            // IMPORTANT: Only send to sender ONCE
             socket.emit("messageStatus", messageToEmit);
 
-            // Send to receiver if online
-            const receiverId = connectedUsers[msg.receiver];
-            if (receiverId) {
+            // Send to receiver if online AND different from sender
+            if (receiverId && receiverId !== socket.id) {
                 io.to(receiverId).emit("messageStatus", {
                     ...messageToEmit,
                     status: "sent",
                 });
             }
         } catch (error) {
-            console.error("Error saving message:", error);
+            console.error("❌ Error saving message:", error);
+            socket.emit("messageError", {
+                error: "Failed to send message",
+            });
         }
     });
 
     // Handle disconnect
     socket.on("disconnect", () => {
         delete connectedUsers[userName];
-        console.log("User disconnected:", socket.id, userName);
+        console.log("👋 User disconnected:", socket.id, userName);
 
         // Notify everyone of updated online users
         emitOnlineUsers();

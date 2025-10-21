@@ -1,4 +1,4 @@
-# 💬 RealTime Chat Application
+# 💬 SocketTalk
 
 A modern, full-stack real-time chat application built with the MERN stack and Socket.IO for instant communication.
 

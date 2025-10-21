@@ -2,6 +2,8 @@
 
 A modern, full-stack real-time chat application built with the MERN stack and Socket.IO for instant communication.
 
+Live Demo: https://real-time-chat-app-iivu.onrender.com/
+
 ## ✨ Features
 
 ### 🔥 Core Functionality
@@ -12,6 +14,7 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 - **Persistent message storage** with MongoDB
 - **User authentication** (Register/Login)
 - **Live Notification** for new messages
+-  **Ai Integration** for automatic messaging
 
 ### 👑 Admin Features
 
@@ -121,6 +124,10 @@ A modern, full-stack real-time chat application built with the MERN stack and So
 - **Efficient database queries** with MongoDB indexes
 - **Message pagination** for large conversations
 - **Optimized re-renders** with React best practices
+
+### AI Integration
+- **Smart Reply Assistant**: A built-in AI button enables users to generate context-aware replies with a single click, streamlining conversations and reducing typing effort.
+
 
 ## 🏗️ Project Structure
 

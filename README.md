@@ -50,6 +50,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ⭐ **Star this repo if you find it helpful!**
 
-Made with ❤️ by [Daya](https://github.com/Daya1222)
+Made with ❤️ by [Daya](https://github.com/dayaj1222)
 
 </div>
